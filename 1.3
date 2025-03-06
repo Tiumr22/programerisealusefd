@@ -1,0 +1,24 @@
+# def analyze_text(text):
+#     words = text.split()  
+#     word_count = len(words)  
+#     char_count = len(''.join(words))  
+#     longest_word = max(words, key=len)  
+#     return f"Слов: {word_count}\nСимволов без пробелов: {char_count}\nСамое длинное слово: \"{longest_word}\""
+# 
+# 
+# text = "Programmeerimine muudab maailma paremaks"
+# print(analyze_text(text))
+
+
+# import re
+# 
+# def valid_passwords(passwords):
+#     valid_passwords = []
+#     for password in passwords:
+#         if len(password) >= 8 and re.search(r'\d', password) and re.search(r'[A-Z]', password):
+#             valid_passwords.append(password)
+#     return valid_passwords
+# 
+# 
+# paroolid = ["qwerty", "TugevParool1", "12345678", "PythonOnParim!"]
+# print("Kehtivad paroolid:", valid_passwords(paroolid))
