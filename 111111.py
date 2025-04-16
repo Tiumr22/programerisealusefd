@@ -1,95 +1,55 @@
-import random
-
 class Level:
-    def __init__(self, name):
-        self.name = name
-        self.resources = random.randint(20, 50)
-        self.min_threshold = 10
-        self.alive = True
+    def __init__(self, level_id, resources):
+        self.level_id = level_id
+        self.resources = resources
+        self.next_level = None
 
-    def show(self):
-        status = "✅" if self.alive else "❌"
-        print(f"{self.name}: {self.resources} ресурсов | Статус: {status}")
+    def set_next_level(self, next_level):
+        self.next_level = next_level
 
-    def keep_resources(self):
-        print(f"{self.name} сохраняет свои ресурсы.")
+    def get_resources(self):
+        return self.resources
 
-    def share(self, levels):
-        if not self.alive:
-            return
-        amount = int(input(f"{self.name} - Сколько ресурсов поделить с соседями? "))
-        neighbors = []
-        index = levels.index(self)
-        if index > 0 and levels[index - 1].alive:
-            neighbors.append(levels[index - 1])
-        if index < len(levels) - 1 and levels[index + 1].alive:
-            neighbors.append(levels[index + 1])
-        if not neighbors:
-            print("Нет живых соседей для обмена.")
-            return
-        share_amount = amount // len(neighbors)
-        for neighbor in neighbors:
-            neighbor.resources += share_amount
-        self.resources -= amount
-        print(f"{self.name} поделился с соседями.")
-
-    def transfer(self, levels):
-        if not self.alive:
-            return
-        index = levels.index(self)
-        if index < len(levels) - 1 and levels[index + 1].alive:
-            target = levels[index + 1]
-            loss = int(self.resources * 0.1)
-            transfer_amount = self.resources - loss
-            target.resources += transfer_amount
-            print(f"{self.name} передал {transfer_amount} ресурсов -> {target.name} (потеря: {loss})")
-            self.resources = 0
+    def share_resources(self, amount):
+        if amount <= self.resources:
+            self.resources -= amount
+            print(f"Level {self.level_id} shared {amount} resources.")
+            return amount
         else:
-            print("Нельзя передать дальше.")
+            print(f"Level {self.level_id} doesn't have enough resources to share.")
+            return 0
 
-    def check_alive(self):
-        if self.resources < self.min_threshold:
-            self.alive = False
-            print(f"{self.name} ВЫБЫЛ из игры!")
+    def transfer_resources(self, amount):
+        if self.next_level:
+            transferred = self.share_resources(amount)
+            self.next_level.receive_resources(transferred)
 
+    def receive_resources(self, amount):
+        self.resources += amount
+        print(f"Level {self.level_id} received {amount} resources.")
 
-def show_all(levels):
-    print("\n=== Статус всех уровней ===")
-    for lvl in levels:
-        lvl.show()
-    print("===========================\n")
+    def __str__(self):
+        return f"Level {self.level_id}: {self.resources} resources"
 
+# Инициализация уровней
+X = 10
+levels = [Level(i + 1, 100) for i in range(X)]
 
-def main():
-    levels = [Level(f"Уровень {i+1}") for i in range(10)]
-    round_number = 1
+# Установка связей между уровнями
+for i in range(X - 1):
+    levels[i].set_next_level(levels[i + 1])
 
-    while any(l.alive for l in levels):
-        print(f"\n=== Раунд {round_number} ===")
-        for lvl in levels:
-            if not lvl.alive:
-                continue
-            lvl.show()
-            print("1 - Оставить ресурсы себе")
-            print("2 - Поделиться с соседями")
-            print("3 - Передать вниз")
-            action = input("Выберите действие (1-3): ")
+# Пример действий
+print("=== Initial State ===")
+for level in levels:
+    print(level)
 
-            if action == "1":
-                lvl.keep_resources()
-            elif action == "2":
-                lvl.share(levels)
-            elif action == "3":
-                lvl.transfer(levels)
-            else:
-                print("Неверный выбор")
+# Уровень 1 передаёт 30 ресурсов уровню 2
+levels[0].transfer_resources(30)
 
-            lvl.check_alive()
+# Уровень 2 делится 20 ресурсами (например, с внешним игроком)
+shared = levels[1].share_resources(20)
 
-        show_all(levels)
-        round_number += 1
-
-    print("Игра окончена. Все уровни выбыли.")
-
-
-main()
+print("\n=== After Actions ===")
+for level in levels:
+    print(level)
