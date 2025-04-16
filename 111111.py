@@ -12,6 +12,7 @@ class Level:
 
     def move_people_to(self, count, target_level, platform):
         if platform.resources.get("food", 0) < count or platform.resources.get("water", 0) < count:
+            print("Game over!")
             return
         
         self.remove_people(count)
@@ -19,6 +20,12 @@ class Level:
         platform.remove_resource("food", count)
         platform.remove_resource("water", count)
 
+        if platform.resources.get("food", 0) <= 0:
+            print("Food resources depleted. Game over!")
+            return
+
+        print("Move successful")
+        print(f"{self.level_name} - People: {self.people_count}, Food: {platform.resources.get('food', 0)}, Water: {platform.resources.get('water', 0)}")
 
 class Platform:      
     def __init__(self, platform_id):
@@ -34,15 +41,13 @@ class Platform:
             if self.resources[resource_name] <= 0:
                 del self.resources[resource_name]
 
-    def get_resources(self):
-        return self.resources
-
 
 platform1 = Platform(platform_id=1)
-level1 = Level(level_id=1, level_name="first level", people_count=1000)
-level2 = Level(level_id=2, level_name="second level", people_count=250)
+level1 = Level(level_id=1, level_name="first level", people_count=121)
+level2 = Level(level_id=2, level_name="second level", people_count=25)
 
 platform1.add_resources("water", 50)
 platform1.add_resources("food", 50)
 
 level1.move_people_to(49, level2, platform1)
+
