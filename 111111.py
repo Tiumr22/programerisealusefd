@@ -1,55 +1,64 @@
+class Platform:
+    def __init__(self, levels):
+        self.levels = levels
+
+    def get_next_level(self, current_level):
+        # Tagastab järgmise taseme
+        level_index = self.levels.index(current_level)
+        if level_index < len(self.levels) - 1:
+            return self.levels[level_index + 1]
+        return None
+
+    def run_game(self, player):
+        # Läbib kõik tasemed ja lubab mängijal teha otsuseid
+        for level in self.levels:
+            if level.is_active:
+                player.make_decision(level)
+                if not level.is_active:
+                    break
+class Player:
+    def __init__(self, name):
+        self.name = name
+
+    def make_decision(self, level):
+        # Mängija teeb otsuse, kas hoida ressursse, jagada või edasi anda
+        print(f"Teed otsuse tasemel {level.level_id}.")
+        action = input("Kuidas jagada ressursse (1: endale, 2: jagada, 3: edasi anda)? ")
+
+        if action == "1":
+            print(f"Tase {level.level_id} jättis kõik ressursid endale.")
+        elif action == "2":
+            amount = int(input("Kui palju ressursse jagada? "))
+            level.share_resources(amount)
+        elif action == "3":
+            amount = int(input("Kui palju ressursse edasi anda? "))
+            next_level = Platform.get_next_level(level)
+            level.transfer_resources(amount, next_level)
 class Level:
-    def __init__(self, level_id, resources):
+    def __init__(self, level_id, resources, min_threshold):
         self.level_id = level_id
         self.resources = resources
-        self.next_level = None
-
-    def set_next_level(self, next_level):
-        self.next_level = next_level
+        self.min_threshold = min_threshold
+        self.is_active = True
 
     def get_resources(self):
         return self.resources
 
-    def share_resources(self, amount):
-        if amount <= self.resources:
-            self.resources -= amount
-            print(f"Level {self.level_id} shared {amount} resources.")
-            return amount
-        else:
-            print(f"Level {self.level_id} doesn't have enough resources to share.")
-            return 0
+    def lose_resources(self, amount):
+        self.resources -= amount
+        if self.resources < self.min_threshold:
+            self.is_active = False
+            print(f"Tase {self.level_id} on väljas mängust!")
 
-    def transfer_resources(self, amount):
-        if self.next_level:
-            transferred = self.share_resources(amount)
-            self.next_level.receive_resources(transferred)
+    def transfer_resources(self, amount, next_level):
+        transfer_amount = amount * 0.9  # 10% kadus
+        self.lose_resources(amount)
+        next_level.receive_resources(transfer_amount)
 
     def receive_resources(self, amount):
         self.resources += amount
-        print(f"Level {self.level_id} received {amount} resources.")
 
-    def __str__(self):
-        return f"Level {self.level_id}: {self.resources} resources"
+    def share_resources(self, amount):
+        self.resources -= amount
+        print(f"Tase {self.level_id} jagas {amount} ressursse.")
 
-# Инициализация уровней
-X = 10
-levels = [Level(i + 1, 100) for i in range(X)]
-
-# Установка связей между уровнями
-for i in range(X - 1):
-    levels[i].set_next_level(levels[i + 1])
-
-# Пример действий
-print("=== Initial State ===")
-for level in levels:
-    print(level)
-
-# Уровень 1 передаёт 30 ресурсов уровню 2
-levels[0].transfer_resources(30)
-
-# Уровень 2 делится 20 ресурсами (например, с внешним игроком)
-shared = levels[1].share_resources(20)
-
-print("\n=== After Actions ===")
-for level in levels:
-    print(level)
