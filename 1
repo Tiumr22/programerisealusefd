@@ -1,9 +1,9 @@
-# Класс книги
+
 class Book:
     def __init__(self, title, author):
-        self.title = title  # Название книги
-        self.author = author  # Автор книги
-        self.is_available = True  # Доступность книги для пользователя
+        self.title = title  
+        self.author = author  
+        self.is_available = True  
 
     def borrow_book(self):
         if self.is_available:
@@ -17,12 +17,12 @@ class Book:
         print(f"Вы вернули книгу '{self.title}'.")
 
 
-# Класс пользователя
+
 class User:
     def __init__(self, name, user_id):
-        self.name = name  # Имя пользователя
-        self.user_id = user_id  # Идентификатор пользователя
-        self.borrowed_books = []  # Список взятых книг
+        self.name = name  
+        self.user_id = user_id  
+        self.borrowed_books = []  
 
     def borrow(self, book):
         if book.is_available:
@@ -39,7 +39,7 @@ class User:
             print(f"{self.name}, вы не брали эту книгу.")
 
 
-# Класс библиотеки
+
 class Library:
     def __init__(self):
         self.books = []  # Список всех книг в библиотеке
@@ -56,36 +56,3 @@ class Library:
                 print(f"'{book.title}' - {availability}")
         else:
             print("Библиотека пуста.")
-
-
-# Пример работы программы
-if __name__ == "__main__":
-    # Создаем книги
-    book1 = Book("1984", "Джордж Оруэлл")
-    book2 = Book("Мастер и Маргарита", "Михаил Булгаков")
-
-    # Создаем библиотеку
-    library = Library()
-    library.add_book(book1)
-    library.add_book(book2)
-
-    # Создаем пользователей
-    user1 = User("Иван", 1)
-    user2 = User("Мария", 2)
-
-    # Показываем доступные книги
-    library.show_books()
-
-    # Пользователи берут книги
-    user1.borrow(book1)  # Иван берет книгу 1984
-    user2.borrow(book2)  # Мария берет книгу Мастер и Маргарита
-
-    # Показываем доступные книги после взятия
-    library.show_books()
-
-    # Пользователи возвращают книги
-    user1.return_book(book1)
-    user2.return_book(book2)
-
-    # Показываем доступные книги после возврата
-    library.show_books()
