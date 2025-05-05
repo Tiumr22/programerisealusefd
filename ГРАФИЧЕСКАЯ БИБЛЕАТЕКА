@@ -1,0 +1,73 @@
+import tkinter as tk
+
+books = []       # Список книг
+users = []       # Список пользователей
+
+def add_book():
+    title = entry_book.get()
+    if title:
+        books.append({"title": title, "taken": False})
+        entry_book.delete(0, tk.END)
+        show_books()
+
+def take_book():
+    title = entry_book.get()
+    for book in books:
+        if book["title"] == title and not book["taken"]:
+            book["taken"] = True
+            break
+    show_books()
+
+def return_book():
+    title = entry_book.get()
+    for book in books:
+        if book["title"] == title and book["taken"]:
+            book["taken"] = False
+            break
+    show_books()
+
+def add_user():
+    name = entry_user.get()
+    if name:
+        users.append(name)
+        entry_user.delete(0, tk.END)
+        show_users()
+
+def show_books():
+    listbox.delete(0, tk.END)
+    for book in books:
+        status = "доступна" if not book["taken"] else "взята"
+        listbox.insert(tk.END, f"{book['title']} — {status}")
+
+def show_users():
+    listbox.delete(0, tk.END)
+    for user in users:
+        listbox.insert(tk.END, f"Пользователь: {user}")
+
+# --- Интерфейс ---
+root = tk.Tk()
+root.title("Простая библиотека")
+
+# --- Ввод книги ---
+tk.Label(root, text="Название книги:").pack()
+entry_book = tk.Entry(root)
+entry_book.pack()
+
+tk.Button(root, text="Добавить книгу", command=add_book).pack()
+tk.Button(root, text="Взять книгу", command=take_book).pack()
+tk.Button(root, text="Вернуть книгу", command=return_book).pack()
+tk.Button(root, text="Показать книги", command=show_books).pack(pady=5)
+
+# --- Ввод пользователя ---
+tk.Label(root, text="Имя пользователя:").pack()
+entry_user = tk.Entry(root)
+entry_user.pack()
+
+tk.Button(root, text="Добавить пользователя", command=add_user).pack()
+tk.Button(root, text="Показать пользователей", command=show_users).pack(pady=5)
+
+# --- Список вывода ---
+listbox = tk.Listbox(root, width=40)
+listbox.pack(pady=10)
+
+root.mainloop()
