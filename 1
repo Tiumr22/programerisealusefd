@@ -1,58 +1,80 @@
-
+# Класс книги
 class Book:
-    def __init__(self, title, author):
-        self.title = title  
-        self.author = author  
-        self.is_available = True  
+    def __init__(self, title):
+        self.title = title
+        self.available = True
+        self.borrowed_by = None
 
-    def borrow_book(self):
-        if self.is_available:
-            self.is_available = False
-            print(f"Вы взяли книгу '{self.title}'")
-        else:
-            print(f"Книга '{self.title}' недоступна для выдачи.")
-
-    def return_book(self):
-        self.is_available = True
-        print(f"Вы вернули книгу '{self.title}'.")
-
-
-
+# Класс пользователя
 class User:
-    def __init__(self, name, user_id):
-        self.name = name  
-        self.user_id = user_id  
-        self.borrowed_books = []  
+    def __init__(self, name):
+        self.name = name
 
-    def borrow(self, book):
-        if book.is_available:
-            book.borrow_book()
-            self.borrowed_books.append(book)
-        else:
-            print(f"{self.name}, эта книга сейчас недоступна.")
+# Библиотека
+books = []      # Список всех книг
+users = []      # Список всех пользователей
 
-    def return_book(self, book):
-        if book in self.borrowed_books:
-            book.return_book()
-            self.borrowed_books.remove(book)
-        else:
-            print(f"{self.name}, вы не брали эту книгу.")
+# Простое меню
+while True:
+    print("\nМеню:")
+    print("1. Добавить книгу")
+    print("2. Зарегистрировать пользователя")
+    print("3. Показать книги")
+    print("4. Взять книгу")
+    print("5. Вернуть книгу")
+    print("6. Выйти")
 
+    choice = input("Выберите пункт меню: ")
 
+    if choice == "1":
+        title = input("Название книги: ")
+        books.append(Book(title))
+        print("Книга добавлена.")
 
-class Library:
-    def __init__(self):
-        self.books = []  # Список всех книг в библиотеке
+    elif choice == "2":
+        name = input("Имя пользователя: ")
+        users.append(User(name))
+        print("Пользователь зарегистрирован.")
 
-    def add_book(self, book):
-        self.books.append(book)
-        print(f"Книга '{book.title}' добавлена в библиотеку.")
-
-    def show_books(self):
-        if self.books:
+    elif choice == "3":
+        if books:
             print("Книги в библиотеке:")
-            for book in self.books:
-                availability = "доступна" if book.is_available else "недоступна"
-                print(f"'{book.title}' - {availability}")
+            for book in books:
+                status = "доступна" if book.available else f"у {book.borrowed_by}"
+                print(f"- {book.title} ({status})")
         else:
-            print("Библиотека пуста.")
+            print("Книг нет.")
+
+    elif choice == "4":
+        name = input("Имя пользователя: ")
+        title = input("Название книги: ")
+        found = False
+
+        for book in books:
+            if book.title == title and book.available:
+                book.available = False
+                book.borrowed_by = name
+                print(f"{name} взял книгу '{title}'")
+                found = True
+                break
+
+        if not found:
+            print("Книга недоступна или не найдена.")
+
+    elif choice == "5":
+        title = input("Название книги: ")
+        for book in books:
+            if book.title == title and not book.available:
+                book.available = True
+                print(f"Книга '{title}' возвращена.")
+                book.borrowed_by = None
+                break
+        else:
+            print("Книга не найдена или уже доступна.")
+
+    elif choice == "6":
+        print("Выход.")
+        break
+
+    else:
+        print("Неверный выбор.")
