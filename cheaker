@@ -1,0 +1,32 @@
+def has_special_chars(password):
+    special_chars = ",_#@*"
+    return sum(1 for char in password if char in special_chars)
+
+def password_strength(password):
+    special_count = has_special_chars(password)
+    
+    if len(password) >= 16 and special_count >= 3:
+        return "Тотальный"
+    elif len(password) >= 12 and special_count >= 2:
+        return "Средний"
+    elif len(password) >= 8 and special_count >= 1:
+        return "Слабый"
+    
+    return "Слишком короткий или недостаточно символов"
+
+
+password = input("Введите пароль: ")
+print(f"Сила пароля: {password_strength(password)}")
+
+def validate_email(email):
+    if "@" not in email:
+        return "Email должен содержать символ '@'"
+    if email.count('.') < 1 or email.split('@')[1].count('.') < 1:
+        return "Email должен содержать хотя бы одну точку после '@'"
+    if email.startswith('@') or email.startswith('.'):
+        return "Email не может начинаться с '@' или '.'"
+    return "Email корректен"
+
+email = input("Введите email: ")
+print(validate_email(email))
+
