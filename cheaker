@@ -30,3 +30,35 @@ def validate_email(email):
 email = input("Введите email: ")
 print(validate_email(email))
 
+def check_length(username):
+    if len(username) >= 5:
+        print("колво символов: подходящае")
+    else:
+        print("длинна слишком маленькая(нужно не меньше 5 символов)")
+        
+def check_spaces(username):
+    if ' ' in username:
+        print("пробелов не должно быть в нике")
+    else:
+        print("Пробелы: отсутсвуют")
+        
+def check_characters(username):
+    if username.isalnum():
+        print("В нике только буквы и цифры: да")
+    else:
+        print("Имя должно содержать только буквы и цифры!")
+
+def fix_username(username):
+    username = ''.join(c for c in username if c.isalnum())
+    while len(username) < 5:
+        username += '1'
+    return username
+
+
+name = input("Введи юзернейм: ")
+check_length(name)
+check_spaces(name)
+check_characters(name)
+
+print("Поправленный юзернейм:", fix_username(name))
+
